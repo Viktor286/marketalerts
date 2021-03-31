@@ -1,8 +1,14 @@
-import Main from './Main';
-import fetch from 'node-fetch';
+import marketWatcher from './market-watcher';
+import AlertsManager from './alerts-manager';
+import { frequencySeconds } from './app-congif';
+import { getRandomInt } from './utils';
 
-Main.log('node-ts-starter is ok');
+const alertManager = new AlertsManager();
 
-fetch('https://github.com/')
-  .then((res) => res.text())
-  .then((body) => console.log(body));
+(async () => {
+  await marketWatcher(alertManager);
+  setInterval(
+    () => marketWatcher(alertManager),
+    (frequencySeconds + getRandomInt(0, frequencySeconds)) * 1000,
+  );
+})();

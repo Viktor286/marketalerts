@@ -1,0 +1,67 @@
+export default {
+  filter: [
+    {
+      left: 'change_from_open',
+      operation: 'nempty',
+    },
+    {
+      left: 'type',
+      operation: 'in_range',
+      right: ['stock', 'dr', 'fund'],
+    },
+    {
+      left: 'subtype',
+      operation: 'in_range',
+      right: ['common', '', 'etf', 'unit', 'mutual', 'money', 'reit', 'trust'],
+    },
+    {
+      left: 'exchange',
+      operation: 'in_range',
+      right: ['AMEX', 'NASDAQ', 'NYSE'],
+    },
+    {
+      left: 'market_cap_basic',
+      operation: 'egreater',
+      right: 50000000000,
+    },
+    {
+      left: 'ROC',
+      operation: 'less',
+      right: 1,
+    },
+  ],
+  options: { lang: 'en' },
+  // @ts-ignore
+  symbols: { query: { types: [] }, tickers: [] },
+  columns: [
+    'name',
+    'market_cap_basic',
+    'Volatility.D',
+    'Volatility.W',
+    'Volatility.M',
+    'volume',
+    'change',
+    'close',
+    'Recommend.All',
+    'SMA50',
+    'SMA30',
+    'ROC',
+    'description',
+    'name',
+    'type',
+    'subtype',
+    'update_mode',
+    'pricescale',
+    'minmov',
+    'fractional',
+    'minmove2',
+    'SMA50',
+    'close',
+    'SMA30',
+  ],
+  sort: {
+    sortBy: 'change_from_open',
+    sortOrder: 'asc',
+  },
+  range: [0, 150],
+};

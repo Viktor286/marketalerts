@@ -1,11 +1,11 @@
 {
   "name": "market-alerts",
   "version": "2.0.0",
-  "description": "Market monitoring with alerts",
+  "description": "Server side market monitoring with alerts",
   "main": "src/index.ts",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/Viktor286/marketalerts.git"
   },
   "engines": {
     "node": ">= 15.12.0"

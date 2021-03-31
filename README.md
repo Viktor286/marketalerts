@@ -1,5 +1,4 @@
-# Node.js Typescript App Starter
+# server side market alerts 
 
-Project starter for Node.js app on typescript.
-
-Checkout package.json and config files for setup overview.
+Server side market monitoring with alerts
+(Educational purposes project)
