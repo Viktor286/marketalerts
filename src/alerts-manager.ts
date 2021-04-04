@@ -1,3 +1,4 @@
+import AlertProviders from './alert-providers';
 import RulesManager, { IRule } from './rules-manager';
 import { ITicketData } from './data-vendors/tradingview';
 
@@ -13,13 +14,14 @@ export interface IAlertMessage {
   status: Extract<keyof IAlertStatus, number>;
 }
 
-const alertStatus = {
+const alertStatus: IAlertStatus = {
   pending: 0,
   fulfilled: 1,
 };
 
 export default class AlertsManager {
-  private ledger: Map<string, IAlertMessage> = new Map();
+  private rulesToMsgStore: Map<string, IAlertMessage> = new Map();
+  private alertProviders = new AlertProviders();
 
   addAlert(alertRule: IRule, ticketData: Partial<ITicketData>) {
     const ruleToTicketId = RulesManager.createRuleToTicketId(
@@ -27,8 +29,8 @@ export default class AlertsManager {
       ticketData,
     );
     const alertMsgObj = AlertsManager.createAlertMsgObj(alertRule, ticketData);
-    if (!this.ledger.has(ruleToTicketId))
-      this.ledger.set(ruleToTicketId, alertMsgObj);
+    if (!this.rulesToMsgStore.has(ruleToTicketId))
+      this.rulesToMsgStore.set(ruleToTicketId, alertMsgObj);
   }
 
   static createAlertMsgObj(
@@ -49,18 +51,17 @@ export default class AlertsManager {
     alertRule: IRule;
     ticketData: Partial<ITicketData>;
   }): string {
+    const { ticket } = ticketData;
     switch (alertRule.operator) {
       case 'greater-or-less':
         const ticketDataValue = ticketData[alertRule.target];
-        return `${
-          ticketData.ticket
-        } just moved to ${alertRule.target.toUpperCase()} ${
+        const ticketValue =
           typeof ticketDataValue === 'number'
             ? ticketDataValue.toFixed(2)
-            : ticketDataValue
-        } | Rule: '${alertRule.operator}' ${
-          alertRule.value
-        } ${alertRule.target.toUpperCase()} at ${new Date().toLocaleString()}`;
+            : ticketDataValue;
+        return `:zap: ${ticket.toUpperCase()} ${ticketValue}% \n\n— \`<https://www.tradingview.com/symbols/${ticket}|${ticket}>\` just moved \`<https://www.tradingview.com/symbols/${ticket}|${ticketValue}%>\` (rule: '${
+          alertRule.operator
+        }' ${alertRule.value} ${alertRule.target.toUpperCase()})\n.`;
     }
   }
 
@@ -69,7 +70,7 @@ export default class AlertsManager {
     const sendingBatch: IAlertMessage[] = [];
 
     // Prepare common VIEW for all alerts
-    this.ledger.forEach((alertMsgObj) => {
+    this.rulesToMsgStore.forEach((alertMsgObj) => {
       if (alertMsgObj.status === alertStatus.pending) {
         alertDocument = alertDocument
           .concat(this.createAlertView(alertMsgObj))
@@ -96,11 +97,13 @@ export default class AlertsManager {
     return true;
   }
 
-  // todo: implement sending service drivers
   async sendAlert(alertDocument: string): Promise<boolean> {
     console.log(
       `AlertsManager: sending alert via Telegram and Mail\n===\n${alertDocument}===`,
     );
+
+    await this.alertProviders.notifyAllProviders(alertDocument);
+    console.log('ok');
     return true;
   }
 }

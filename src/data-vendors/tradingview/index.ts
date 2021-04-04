@@ -48,8 +48,6 @@ export interface ITicketDataVendor {
   description: string;
 }
 
-// type IVendorToLocalMapping = object<keyof >
-
 export default class TradingView {
   static scannerUrl = 'https://scanner.tradingview.com/america/scan';
 
