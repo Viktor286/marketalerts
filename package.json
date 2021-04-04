@@ -51,6 +51,7 @@
     }
   },
   "dependencies": {
+    "@slack/web-api": "^6.1.0",
     "node-fetch": "^2.6.1"
   }
 }

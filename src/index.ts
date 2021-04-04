@@ -3,12 +3,12 @@ import AlertsManager from './alerts-manager';
 import { frequencySeconds } from './app-congif';
 import { getRandomInt } from './utils';
 
-const alertManager = new AlertsManager();
+const alertsManager = new AlertsManager();
 
 (async () => {
-  await marketWatcher(alertManager);
+  await marketWatcher(alertsManager);
   setInterval(
-    () => marketWatcher(alertManager),
+    () => marketWatcher(alertsManager),
     (frequencySeconds + getRandomInt(0, frequencySeconds)) * 1000,
   );
 })();
